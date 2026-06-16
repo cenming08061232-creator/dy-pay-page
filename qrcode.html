@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>支付宝付款二维码</title>
+<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:system-ui,-apple-system,Microsoft YaHei}
+body{background:#1677ff;padding:20px 15px}
+.container{max-width:440px;margin:0 auto}
+.back-btn{color:#fff;font-size:16px;margin-bottom:20px;display:flex;align-items:center;gap:6px;text-decoration:none}
+.qr-card{background:#fff;border-radius:16px;padding:24px 20px;text-align:center}
+.qr-title{font-size:22px;color:#222;margin-bottom:16px;font-weight:600}
+.qr-show-box{width:280px;height:280px;background:#f8f8f8;margin:0 auto 16px;border-radius:10px;display:flex;align-items:center;justify-content:center}
+.qr-img{width:260px;height:260px}
+.order-info{background:#f5f7fa;border-radius:10px;padding:14px;text-align:left;margin-bottom:18px}
+.order-info p{display:flex;justify-content:space-between;font-size:14px;line-height:2}
+.btn-group{display:flex;flex-direction:column;gap:12px;margin-top:10px}
+.save-qr{width:100%;height:48px;background:#ffffff;color:#1677ff;border:1px solid #1677ff;border-radius:10px;font-size:16px;cursor:pointer;font-weight:500}
+.jump-alipay{width:100%;height:48px;background:#1677ff;color:#fff;border:none;border-radius:10px;font-size:16px;cursor:pointer;font-weight:500}
+.tip-text{color:#fff;text-align:center;margin-top:16px;font-size:13px;opacity:0.9}
+</style>
+</head>
+<body>
+<div class="container">
+    <a href="index.html" class="back-btn">← 返回下单页面</a>
+    <div class="qr-card">
+        <h2 class="qr-title">支付宝扫码付款</h2>
+        <div class="qr-show-box">
+            <img class="qr-img" id="qrImage" alt="付款二维码">
+        </div>
+        <div class="order-info">
+            <p><span>订单号：</span><span id="outOrderId"></span></p>
+            <p><span>抖音号：</span><span id="outDy"></span></p>
+            <p><span>查询手机号：</span><span id="outPhone"></span></p>
+            <p><span>购买数量：</span><span id="outNum"></span></p>
+            <p><span>应付金额：</span><span id="outTotal"></span></p>
+        </div>
+        <div class="btn-group">
+            <button class="save-qr" id="saveQrBtn">保存二维码到相册</button>
+            <button class="jump-alipay" id="jumpPayBtn">前往支付宝App支付</button>
+        </div>
+    </div>
+    <p class="tip-text">保存图片后，打开支付宝扫一扫识别付款</p>
+</div>
+<a id="downloadLink" style="display:none"></a>
+
+<script>
+const urlParams = new URLSearchParams(window.location.search);
+const dy = decodeURIComponent(urlParams.get('dy'));
+const phone = urlParams.get('phone');
+const num = urlParams.get('num');
+const total = urlParams.get('total');
+const orderId = urlParams.get('orderId');
+let alipayMockUrl = "";
+
+const qrImage = document.getElementById("qrImage");
+const saveQrBtn = document.getElementById("saveQrBtn");
+const jumpPayBtn = document.getElementById("jumpPayBtn");
+const downloadLink = document.getElementById("downloadLink");
+document.getElementById("outOrderId").innerText = orderId;
+document.getElementById("outDy").innerText = dy;
+document.getElementById("outPhone").innerText = phone;
+document.getElementById("outNum").innerText = num;
+document.getElementById("outTotal").innerText = `¥${total}`;
+
+alipayMockUrl = `alipays://platformapi/startapp?appId=20000067&orderNo=${orderId}&amount=${total}&subject=抖音自助服务-${dy}`;
+QRCode.toDataURL(alipayMockUrl, {width:260}, function(err, url){
+    if(!err){
+        qrImage.src = url;
+    }
+})
+
+saveQrBtn.onclick = function(){
+    downloadLink.href = qrImage.src;
+    downloadLink.download = `付款码_${orderId}.png`;
+    downloadLink.click();
+}
+
+jumpPayBtn.onclick = function(){
+    window.location.href = alipayMockUrl;
+    setTimeout(()=>{
+        alert("演示提示：当前为模拟链接，无真实支付订单，仅界面测试");
+    },600)
+}
+</script>
+</body>
+</html>
