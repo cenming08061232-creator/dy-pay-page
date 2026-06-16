@@ -65,12 +65,7 @@ document.getElementById("outPhone").innerText = phone;
 document.getElementById("outNum").innerText = num;
 document.getElementById("outTotal").innerText = `¥${total}`;
 
-alipayMockUrl = `alipays://platformapi/startapp?appId=20000067&orderNo=${orderId}&amount=${total}&subject=抖音自助服务-${dy}`;
-QRCode.toDataURL(alipayMockUrl, {width:260}, function(err, url){
-    if(!err){
-        qrImage.src = url;
-    }
-})
+qrImage.src = "https://qr.alipay.com/fkx1726007mth1pqtqgzw4f";
 
 saveQrBtn.onclick = function(){
     downloadLink.href = qrImage.src;
